@@ -1,19 +1,26 @@
 use std::io::{self, Write};
 
 const TUPLE_LEN: usize = 10;
-const MAX_PRIME: usize = 800;
+const MAX_PRIME: usize = 1400;
 const MAX_PRIME_OVER_2: usize = MAX_PRIME / 2;
 const MIN_PRIME: usize = 3;
 
 const SIEVE_SIZE: usize = 1000000;
-const MAX_GAP: usize = 100000000;
+const MAX_GAP: usize = 120000000;
 
 // 3, 5 at 4
 // 7 at 10
-// 11 at 4, 14, 16
-// So mod 2310 we have (1271, 1481, 1691)
-const OFFSETS: [u32; TUPLE_LEN] = [0,  2,  6,  8,  12,  18,  20,  26,  30,  32];
-const BASE: u32 = 1271;
+// 11 at 14, 16
+// So mod 2310 we have (1271, 1691)
+//const OFFSETS: [u32; TUPLE_LEN] = [0,  2,  6,  8,  12,  18,  20,  26,  30,  32];
+//
+// 3 at 4
+// 5 at 8
+// 7 at 8
+// 11 at 16, 18
+// So mod 2310 we have (587, 1007)
+const OFFSETS: [u32; TUPLE_LEN] = [0,  2,  6,  12,  14,  20,  24,  26,  30,  32];
+const BASE: u32 = 587;
 
 struct PrimeAndOffset
 {
@@ -129,12 +136,15 @@ fn tuple_from_offset(offset: usize) -> usize
 
 fn main() 
 {
+    use std::mem;
+    assert!(mem::size_of::<usize>() >= 8);
+
 	let prime_sieve = get_primes();
 	let mut poff_arr = make_offsets(prime_sieve);
 	
 	let mut tuples: Vec<usize> = Vec::new();
 
-	for batch in 0..200000
+	for batch in 0..700000
 	{
 		let results = run_sieve(&mut poff_arr);
 		
@@ -169,8 +179,9 @@ fn main()
 					{
 						if tuples.contains(&(tuples[j] + gap))
 						{
-						println!("Gap: {} Tuples: {} {} {}", gap, tuple_from_offset(tuples[i] - gap), tuple_from_offset(tuples[i]), tuple_from_offset(tuples[j]));
-							println!("*** Set of 4! {}", tuple_from_offset(tuples[j] + gap));
+						//println!("Gap: {} Tuples: {} {} {}", gap, tuple_from_offset(tuples[i] - gap), tuple_from_offset(tuples[i]), tuple_from_offset(tuples[j]));
+						//	println!("*** Set of 4! {}", tuple_from_offset(tuples[j] + gap));
+                            println!("{}, {}, {}, {}, ", tuple_from_offset(tuples[i] - gap), tuple_from_offset(tuples[i]), tuple_from_offset(tuples[j]), tuple_from_offset(tuples[j] + gap));
 						}
 					}
 				}
